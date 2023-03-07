@@ -1,40 +1,54 @@
-#![feature(const_trait_impl)]
-use std::ops::{Range, RangeInclusive};
+#![cfg_attr(not(doctest), doc = include_str!("../README.md"))]
 
+/// A for loop that is usable in const contexts
+/// 
+/// Provides a for loop over a range that can be used in a const contexts.\
+/// Break and continue both work just like in a regular for loop.
+/// 
+/// The only functional difference between this and a regular for loop,
+/// is that this one allows direct mutation of the iteration variable.\
+/// This is however discouraged
+/// 
+/// # Examples
+/// ```
+/// # use const_for::*;
+/// let mut a = 0;
+/// cfor!(i; 0..5 => {
+///     a += i
+/// });
+/// assert!(a == 10)
+/// ```
+/// 
+/// This is equivalent to the following regular for loop, but is usable in const context.
+/// ```
+/// let mut a = 0;
+/// for i in 0..10 {
+///     a += i
+/// }
+/// assert!(a == 10)
+/// ```
+/// 
+/// If the body is just a simple statement, the curly braces are not needed.
+/// ```
+/// # use const_for::*;
+/// let mut a = 0;
+/// cfor!(i; 0..5 => a += i);
+/// assert!(a == 10)
+/// ```
 #[macro_export]
-/// ## Macro for a for loop usable in const context
-/// 
-///     const_for!(i; 0..10 => {
-///        // Body here
-///     });
-/// 
-/// is roughly equivalent to 
-/// 
-///     for i in 0..10 {
-///         // Body here
-///     }
-/// 
-/// But is usable in const context.
-/// 
-/// Break and continue work as expected too.
-macro_rules! const_for {
+macro_rules! cfor {
     ($var: ident; $range: expr => $body: expr) => {
-        let (start, end) = $range.bounds();
-        if start < end {
-            let mut $var = start - 1;
-            loop {
-                $var += 1;
-                if $var >= end {
-                    break
-                }
+        {
+            let mut $var = $range.start;
+            let mut first_ite = true;
 
-                $body
-            }
-        } else {
-            let mut $var = start;
             loop {
-                $var -= 1;
-                if $var < end {
+                if !first_ite {
+                    $var += 1
+                }
+                first_ite = false;
+
+                if $var >= $range.end {
                     break
                 }
 
@@ -44,28 +58,45 @@ macro_rules! const_for {
     };
 }
 
-#[const_trait]
-pub trait ConstRangetrait<T> {
-    fn rev_const(&self) -> Range<T>;
-    fn bounds(&self) -> (T, T);
-}
+/// A reversed for loop that is usable in const contexts
+/// 
+/// Similar to [cfor], but iterates in reversed order.
+/// 
+/// # Examples
+/// ```
+/// # use const_for::*;
+/// cfor_rev!(i; 0..3 => {
+///     // ite. 1: i = 2
+///     // ite. 2: i = 1
+///     // ite. 3: i = 0
+/// });
+/// ```
+/// 
+/// This is equivalent to the following regular for loop, but is usable in const context.
+/// ```
+/// for i in (0..3).rev() {
+///     // body
+/// }
+/// ```
+#[macro_export]
+macro_rules! cfor_rev {
+    ($var: ident; $range: expr => $body: expr) => {
+        {
+            let mut $var = $range.end - 1;
+            let mut first_ite = true;
 
-impl<T: Copy> const ConstRangetrait<T> for Range<T> {
-    fn rev_const(&self) -> Range<T> {
-        Range { start: self.end, end: self.start }
-    }
+            loop {
+                if !first_ite {
+                    $var -= 1;
+                }
+                first_ite = false;
 
-    fn bounds(&self) -> (T, T) {
-        (self.start, self.end)
-    }
-}
+                $body;
 
-impl<T: Copy> const ConstRangetrait<T> for RangeInclusive<T> {
-    fn rev_const(&self) -> Range<T> {
-        Range { start: *self.end(), end: *self.start() }
-    }
-
-    fn bounds(&self) -> (T, T) {
-        (*self.start(), *self.end())
-    }
+                if $var <= $range.start {
+                    break
+                }
+            }
+        }
+    };
 }
