@@ -21,7 +21,7 @@
 /// This is equivalent to the following regular for loop, but is usable in const context.
 /// ```
 /// let mut a = 0;
-/// for i in 0..10 {
+/// for i in 0..5 {
 ///     a += i
 /// }
 /// assert!(a == 10)
