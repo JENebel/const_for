@@ -3,10 +3,9 @@ name = "const_for"
 version = "0.1.0"
 edition = "2021"
 authors = ["Joachim Enggård Nebel"]
-description = "For loops in const contexts with macros"
+description = "For loops in const contexts with macros. Correctly handles Break and continue."
 readme = "README.md"
 repository = "https://github.com/JENebel/const_for"
 license = "MIT"
 keywords = ["const", "for", "loop", "const-fn"]
 categories = ["development-tools::build-utils"]
-

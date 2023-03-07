@@ -3,7 +3,7 @@ use const_for::*;
 #[test]
 const fn simple_for() {
     let mut a = 0;
-    cfor!(i; 0..5 => {
+    const_for!(i; 0..5 => {
         a += i
     });
     assert!(a == 10);
@@ -12,7 +12,7 @@ const fn simple_for() {
 #[test]
 const fn unbracketed_for() {
     let mut a = 0;
-    cfor!(i; 0..5 => a += i);
+    const_for!(i; 0..5 => a += i);
     assert!(a == 10)
 }
 
@@ -20,7 +20,7 @@ const fn unbracketed_for() {
 const fn works_for_unsigned() {
     let start: u8 = 0;
     let mut a = 0;
-    cfor!(i; start..5 => {
+    const_for!(i; start..5 => {
         a += i
     });
     assert!(a == 10);
@@ -29,7 +29,7 @@ const fn works_for_unsigned() {
 #[test]
 const fn passing_0_should_work() {
     let mut a = 0;
-    cfor!(i; -4..5 => {
+    const_for!(i; -4..5 => {
         a += i
     });
     assert!(a == 0);
@@ -39,7 +39,7 @@ const fn passing_0_should_work() {
 fn should_give_same_as_normal_for() {
     let mut a: [usize; 10] = [0; 10];
     let mut index = 0;
-    cfor!(i; 0..a.len() => {
+    const_for!(i; 0..a.len() => {
         a[index] = i;
         index += 1;
     });
@@ -58,7 +58,7 @@ fn should_give_same_as_normal_for() {
 fn should_give_same_as_normal_for_passing_0() {
     let mut c: [i32; 10] = [0; 10];
     let mut index = 0;
-    cfor!(i; -5..(c.len()-5) as i32 => {
+    const_for!(i; -5..(c.len()-5) as i32 => {
         c[index] = i;
         index += 1;
     });
@@ -76,7 +76,7 @@ fn should_give_same_as_normal_for_passing_0() {
 #[test]
 const fn simple_for_rev() {
     let mut a = 0;
-    cfor_rev!(i; 0..5 => {
+    const_for_rev!(i; 0..5 => {
         a += i;
     });
     assert!(a == 10);
@@ -85,7 +85,7 @@ const fn simple_for_rev() {
 #[test]
 const fn unbracketed_for_rev() {
     let mut a = 0;
-    cfor_rev!(i; 0..5 => a += i);
+    const_for_rev!(i; 0..5 => a += i);
     assert!(a == 10)
 }
 
@@ -94,7 +94,7 @@ const fn rev_works_for_unsigned() {
     let start: u8 = 0;
     let end: u8 = 5;
     let mut a = 0;
-    cfor!(i; start..end => {
+    const_for!(i; start..end => {
         a += i
     });
     assert!(a == 10);
@@ -103,7 +103,7 @@ const fn rev_works_for_unsigned() {
 #[test]
 const fn rev_passing_0_should_work() {
     let mut a = 0;
-    cfor!(i; -4..5 => {
+    const_for!(i; -4..5 => {
         a += i
     });
     assert!(a == 0);
@@ -113,7 +113,7 @@ const fn rev_passing_0_should_work() {
 fn rev_should_give_same_as_normal_for() {
     let mut a: [usize; 10] = [0; 10];
     let mut index = 0;
-    cfor_rev!(i; 0..a.len() => {
+    const_for_rev!(i; 0..a.len() => {
         a[index] = i;
         index += 1;
     });
@@ -132,7 +132,7 @@ fn rev_should_give_same_as_normal_for() {
 fn rev_should_give_same_as_normal_for_passing_0() {
     let mut c: [i32; 10] = [0; 10];
     let mut index = 0;
-    cfor_rev!(i; -5..(c.len()-5) as i32 => {
+    const_for_rev!(i; -5..(c.len()-5) as i32 => {
         c[index] = i;
         index += 1;
     });
@@ -174,8 +174,8 @@ const fn gen_white_pawn_attacks_while() -> [u64; 64] {
 const fn gen_white_pawn_attacks_for() -> [u64; 64] {
     let mut masks = [0; 64];
     
-    cfor!(rank; 0..8 => {
-        cfor!(file; 0..8 => {
+    const_for!(rank; 0..8 => {
+        const_for!(file; 0..8 => {
             let index = (rank*8+file) as usize;
             if file != 7 { masks[index] |= (1 << index) >> 7 as u64 }
             if file != 0 { masks[index] |= (1 << index) >> 9 as u64 }

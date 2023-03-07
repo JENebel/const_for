@@ -12,7 +12,7 @@
 /// ```
 /// # use const_for::*;
 /// let mut a = 0;
-/// cfor!(i; 0..5 => {
+/// const_for!(i; 0..5 => {
 ///     a += i
 /// });
 /// assert!(a == 10)
@@ -31,11 +31,11 @@
 /// ```
 /// # use const_for::*;
 /// let mut a = 0;
-/// cfor!(i; 0..5 => a += i);
+/// const_for!(i; 0..5 => a += i);
 /// assert!(a == 10)
 /// ```
 #[macro_export]
-macro_rules! cfor {
+macro_rules! const_for {
     ($var: ident; $range: expr => $body: expr) => {
         {
             let mut $var = $range.start;
@@ -59,12 +59,12 @@ macro_rules! cfor {
 
 /// A reversed for loop that is usable in const contexts
 /// 
-/// Similar to [cfor], but iterates in reversed order.
+/// Similar to [const_for], but iterates in reversed order.
 /// 
 /// # Examples
 /// ```
 /// # use const_for::*;
-/// cfor_rev!(i; 0..3 => {
+/// const_for_rev!(i; 0..3 => {
 ///     // ite. 1: i = 2
 ///     // ite. 2: i = 1
 ///     // ite. 3: i = 0
@@ -78,7 +78,7 @@ macro_rules! cfor {
 /// }
 /// ```
 #[macro_export]
-macro_rules! cfor_rev {
+macro_rules! const_for_rev {
     ($var: ident; $range: expr => $body: expr) => {
         {
             let mut $var = $range.end - 1;
