@@ -6,8 +6,7 @@
 /// Break and continue both work just like in a regular for loop.
 /// 
 /// The only functional difference between this and a regular for loop,
-/// is that this one allows direct mutation of the iteration variable.\
-/// This is however discouraged
+/// is that this one allows direct mutation of the iteration variable. This is however discouraged.
 /// 
 /// # Examples
 /// ```
@@ -28,7 +27,7 @@
 /// assert!(a == 10)
 /// ```
 /// 
-/// If the body is just a simple statement, the curly braces are not needed.
+/// If the body is just a single statement, the curly braces are not needed.
 /// ```
 /// # use const_for::*;
 /// let mut a = 0;

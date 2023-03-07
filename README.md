@@ -9,11 +9,7 @@ This crate provides a macro implementation of for loops that is usable in const 
 An additional bonus is that these macros handle break and continue as expected.\
 The only real difference to the regular for loop is that the iterator variable can be mutated within the loop. This is discouraged though.
 
-Two macros are provided. A regular for loop and a reversed variant:
-
-[cfor]\
-[cfor_rev]
-
+Two macros are provided. A regular for loop and a reversed variant.\
 A reversed variant exists because ranges cannot be reversed in const contexts, as this produces an iterator.\
 Sometimes this is needed though, and with the reversed variant this is possible.
 
@@ -45,14 +41,14 @@ If the body is a single statement, the curly braces are not needed, and the loop
 
 ## Reverse for loop
 
-[cfor_rev] is very similar to [cfor], except backwards:\
+The reversed for loop is very similar to the normal one, except backwards:\
 
     cfor_rev!(i; 0..5 => {
         // Body
     });
 
-This is equivalent to this regular for loop:
+This is equivalent to:
 
-    for i in (0..10).rev() {
+    for i in (0..5).rev() {
         // Body 
     }
