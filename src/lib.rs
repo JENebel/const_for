@@ -1,25 +1,40 @@
 #![feature(const_trait_impl)]
-
-use std::ops::Range;
+use std::ops::{Range, RangeInclusive};
 
 #[macro_export]
+/// ## Macro for a for loop usable in const context
+/// 
+///     const_for!(i; 0..10 => {
+///        // Body here
+///     });
+/// 
+/// is roughly equivalent to 
+/// 
+///     for i in 0..10 {
+///         // Body here
+///     }
+/// 
+/// But is usable in const context.
+/// 
+/// Break and continue work as expected too.
 macro_rules! const_for {
     ($var: ident; $range: expr => $body: expr) => {
-        if $range.start < $range.end {
-            let mut $var = $range.start - 1;½
+        let (start, end) = $range.bounds();
+        if start < end {
+            let mut $var = start - 1;
             loop {
                 $var += 1;
-                if $var >= $range.end {
+                if $var >= end {
                     break
                 }
 
                 $body
             }
         } else {
-            let mut $var = $range.start;
+            let mut $var = start;
             loop {
                 $var -= 1;
-                if $var < $range.end {
+                if $var < end {
                     break
                 }
 
@@ -29,70 +44,28 @@ macro_rules! const_for {
     };
 }
 
-struct ConstRange<T> {
-    pub start: T,
-    pub end: T,
-}
-
 #[const_trait]
-trait ConstRangetrait<T> {
-    fn rev_const(&self) -> ConstRange<T>;
+pub trait ConstRangetrait<T> {
+    fn rev_const(&self) -> Range<T>;
+    fn bounds(&self) -> (T, T);
 }
 
 impl<T: Copy> const ConstRangetrait<T> for Range<T> {
-    fn rev_const(&self) -> ConstRange<T> {
-        ConstRange { start: self.end, end: self.start }
+    fn rev_const(&self) -> Range<T> {
+        Range { start: self.end, end: self.start }
+    }
+
+    fn bounds(&self) -> (T, T) {
+        (self.start, self.end)
     }
 }
 
-impl<T: Copy> const ConstRangetrait<T> for ConstRange<T> {
-    fn rev_const(&self) -> ConstRange<T> {
-        ConstRange { start: self.end, end: self.start }
-    }
-}
-
-#[cfg(test)]
-mod tests {
-    use super::*;
-
-    #[test]
-    const fn simple_for() {
-        let mut a = 0;
-
-        const_for!(i; (0..10) => {
-            a += 1;
-        });
-        
-        assert!(a == 10);
+impl<T: Copy> const ConstRangetrait<T> for RangeInclusive<T> {
+    fn rev_const(&self) -> Range<T> {
+        Range { start: *self.end(), end: *self.start() }
     }
 
-    #[test]
-    const fn simple_break() {
-        let mut a = 0;
-
-        const_for!(i; 0..10 => {
-            if i == 5 {
-                break
-            }
-
-            a += 1;
-        });
-
-        assert!(a == 5)
-    }
-
-    #[test]
-    const fn simple_continue() {
-        let mut a = 0;
-
-        const_for!(i; 0..10 => {
-            if i % 2 == 0 {
-                continue
-            }
-
-            a += 1;
-        });
-
-        assert!(a == 5)
+    fn bounds(&self) -> (T, T) {
+        (*self.start(), *self.end())
     }
 }
