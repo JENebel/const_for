@@ -6,7 +6,7 @@ use std::ops::Range;
 macro_rules! const_for {
     ($var: ident; $range: expr => $body: expr) => {
         if $range.start < $range.end {
-            let mut $var = $range.start - 1;
+            let mut $var = $range.start - 1;½
             loop {
                 $var += 1;
                 if $var >= $range.end {
