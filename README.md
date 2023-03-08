@@ -42,20 +42,20 @@ This is equivalent to this regular for loop:
 Example:
 
     let mut a = 0;
-    const_for!(i; 0..5 => {
+    const_for!(i in 0..5 => {
         a += i
     });
     assert!(a == 10)
 
 If the body is a single statement, the curly braces are not needed, and the loop from the previous example can thus be written as
 
-    const_for!(i; 0..10 => a += i);
+    const_for!(i in 0..10 => a += i);
 
 ## Reverse for loop
 
 The reversed for loop is very similar to the normal one, except backwards:\
 
-    const_for_rev!(i; 0..5 => {
+    const_for_rev!(i in 0..5 => {
         // Body
     });
 
@@ -97,8 +97,8 @@ After:
     const fn gen_white_pawn_attacks() -> [u64; 64] {
         let mut masks = [0; 64];
         
-        const_for!(rank; 0..8 => {
-            const_for!(file; 0..8 => {
+        const_for!(rank in 0..8 => {
+            const_for!(file in 0..8 => {
                 let index = (rank*8+file) as usize;
                 if file != 7 { masks[index] |= (1 << index) >> 7 as u64 }
                 if file != 0 { masks[index] |= (1 << index) >> 9 as u64 }

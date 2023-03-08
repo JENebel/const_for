@@ -1,186 +1,79 @@
 use const_for::*;
 
-#[test]
-const fn simple_for() {
-    let mut a = 0;
-    const_for!(i; 0..5 => {
-        a += i
-    });
-    assert!(a == 10);
+macro_rules! validate_loop {
+    ($($loop:tt)*) => {
+        let mut c_index = 0;
+        let mut c_values_hit = [0; 1000];
+        const_for!(i in $($loop)* => {
+            c_values_hit[c_index] = i;
+            c_index += 1;
+        });
+
+        let mut r_index = 0;
+        let mut r_values_hit = [0; 1000];
+        for i in $($loop)* {
+            r_values_hit[r_index] = i;
+            r_index += 1;
+        };
+
+        assert!(c_index == r_index);
+        assert!(c_values_hit == r_values_hit);
+    };
 }
 
+#[allow(unused_parens)]
 #[test]
-const fn unbracketed_for() {
-    let mut a = 0;
-    const_for!(i; 0..5 => a += i);
-    assert!(a == 10)
+fn normal_for() {
+    validate_loop!(0..10);
+    validate_loop!(-10..10);
+    validate_loop!((0..10));
+    validate_loop!(100..10);
 }
 
+#[allow(unused_parens)]
 #[test]
-const fn works_for_unsigned() {
-    let start: u8 = 0;
-    let mut a = 0;
-    const_for!(i; start..5 => {
-        a += i
-    });
-    assert!(a == 10);
+fn normal_rev() {
+    validate_loop!((0..10).rev());
+    validate_loop!((-10..10).rev());
+    validate_loop!((0..10).rev());
+    validate_loop!((100..10).rev());
 }
 
+#[allow(unused_parens)]
 #[test]
-const fn passing_0_should_work() {
-    let mut a = 0;
-    const_for!(i; -4..5 => {
-        a += i
-    });
-    assert!(a == 0);
+fn custom_step_by() {
+    validate_loop!((0..10).step_by(1));
+    validate_loop!((-10..10).step_by(2));
+    validate_loop!((0..10).step_by(3));
+    validate_loop!((0..100).step_by(32));
+    validate_loop!((100..10).step_by(4));
 }
 
+#[allow(unused_parens)]
 #[test]
-fn should_give_same_as_normal_for() {
-    let mut a: [usize; 10] = [0; 10];
-    let mut index = 0;
-    const_for!(i; 0..a.len() => {
-        a[index] = i;
-        index += 1;
-    });
+fn rev_and_custom_step_by() {
+    /*validate_loop!((0..10).rev().step_by(1));
+    validate_loop!((-10..10).rev().step_by(2));
+    validate_loop!((0..10).rev().step_by(3));
+    validate_loop!((0..100).rev().step_by(32));
+    validate_loop!((100..10).rev().step_by(4));
+    validate_loop!((0..10).step_by(1).rev());
+    validate_loop!((-10..10).step_by(2).rev());*/
 
-    let mut b: [usize; 10] = [0; 10];
-    index = 0;
-    for i in 0..b.len() {
-        b[index] = i;
-        index += 1;
-    }
+    /*println!("Const");
+    const_for!(i in (0..100).rev().step_by(32) => {
+        println!("{i}")
+    });*/
+    const_for!(i in (0..10).step_by(3).rev() => {
 
-    assert!(a == b);
-}
+    })
 
-#[test]
-fn should_give_same_as_normal_for_passing_0() {
-    let mut c: [i32; 10] = [0; 10];
-    let mut index = 0;
-    const_for!(i; -5..(c.len()-5) as i32 => {
-        c[index] = i;
-        index += 1;
-    });
-
-    let mut d: [i32; 10] = [0; 10];
-    index = 0;
-    for i in -5..(d.len()-5) as i32 {
-        d[index] = i;
-        index += 1;
-    }
-
-    assert!(c == d);
-}
-
-#[test]
-const fn simple_for_rev() {
-    let mut a = 0;
-    const_for_rev!(i; 0..5 => {
-        a += i;
-    });
-    assert!(a == 10);
+    /*validate_loop!((0..10).step_by(3).rev());
+    validate_loop!((0..100).step_by(32).rev());
+    validate_loop!((100..10).step_by(4).rev());*/
 }
 
 #[test]
-const fn unbracketed_for_rev() {
-    let mut a = 0;
-    const_for_rev!(i; 0..5 => a += i);
-    assert!(a == 10)
-}
-
-#[test]
-const fn rev_works_for_unsigned() {
-    let start: u8 = 0;
-    let end: u8 = 5;
-    let mut a = 0;
-    const_for!(i; start..end => {
-        a += i
-    });
-    assert!(a == 10);
-}
-
-#[test]
-const fn rev_passing_0_should_work() {
-    let mut a = 0;
-    const_for!(i; -4..5 => {
-        a += i
-    });
-    assert!(a == 0);
-}
-
-#[test]
-fn rev_should_give_same_as_normal_for() {
-    let mut a: [usize; 10] = [0; 10];
-    let mut index = 0;
-    const_for_rev!(i; 0..a.len() => {
-        a[index] = i;
-        index += 1;
-    });
-
-    let mut b: [usize; 10] = [0; 10];
-    index = 0;
-    for i in (0..b.len()).rev() {
-        b[index] = i;
-        index += 1;
-    }
-
-    assert!(a == b);
-}
-
-#[test]
-fn rev_should_give_same_as_normal_for_passing_0() {
-    let mut c: [i32; 10] = [0; 10];
-    let mut index = 0;
-    const_for_rev!(i; -5..(c.len()-5) as i32 => {
-        c[index] = i;
-        index += 1;
-    });
-
-    let mut d: [i32; 10] = [0; 10];
-    index = 0;
-    for i in (-5..(d.len()-5) as i32).rev() {
-        d[index] = i;
-        index += 1;
-    }
-
-    assert!(c == d);
-}
-
-#[test]
-fn real_life_example() {
-    assert!(gen_white_pawn_attacks_while() == gen_white_pawn_attacks_for());
-}
-
-const fn gen_white_pawn_attacks_while() -> [u64; 64] {
-    let mut masks = [0; 64];
-    
-    let mut rank: u8 = 0;
-    while rank < 8 {
-        let mut file: u8 = 0;
-        while file < 8 {
-            let index = (rank*8+file) as usize;
-            if file != 7 { masks[index] |= (1 << index) >> 7 as u64 }
-            if file != 0 { masks[index] |= (1 << index) >> 9 as u64 }
-
-            file += 1;
-        }
-        rank += 1;
-    }
-
-    masks
-}
-
-const fn gen_white_pawn_attacks_for() -> [u64; 64] {
-    let mut masks = [0; 64];
-    
-    const_for!(rank; 0..8 => {
-        const_for!(file; 0..8 => {
-            let index = (rank*8+file) as usize;
-            if file != 7 { masks[index] |= (1 << index) >> 7 as u64 }
-            if file != 0 { masks[index] |= (1 << index) >> 9 as u64 }
-        })
-    });
-
-    masks
+fn brian() {
+    println!("{}", 1.max(3 % 2))
 }

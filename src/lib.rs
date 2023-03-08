@@ -12,7 +12,7 @@
 /// ```
 /// # use const_for::*;
 /// let mut a = 0;
-/// const_for!(i; 0..5 => {
+/// const_for!(i in 0..5 => {
 ///     a += i
 /// });
 /// assert!(a == 10)
@@ -31,21 +31,21 @@
 /// ```
 /// # use const_for::*;
 /// let mut a = 0;
-/// const_for!(i; 0..5 => a += i);
+/// const_for!(i in 0..5 => a += i);
 /// assert!(a == 10)
 /// ```
 #[macro_export]
 macro_rules! const_for {
-    ($var: ident; $range: expr => $body: expr) => {
+    ($var:ident in ($range:expr).step_by($step_by:expr) => $body:expr) => {
         {
             let mut $var = $range.start;
-            let mut first_ite = true;
+            let mut __is_first_ite__ = true;
 
             loop {
-                if !first_ite {
-                    $var += 1
+                if !__is_first_ite__ {
+                    $var += $step_by
                 }
-                first_ite = false;
+                __is_first_ite__ = false;
 
                 if $var >= $range.end {
                     break
@@ -55,47 +55,36 @@ macro_rules! const_for {
             }
         }
     };
-}
 
-/// A reversed for loop that is usable in const contexts
-/// 
-/// Similar to [const_for], but iterates in reversed order.
-/// 
-/// # Examples
-/// ```
-/// # use const_for::*;
-/// const_for_rev!(i; 0..3 => {
-///     // ite. 1: i = 2
-///     // ite. 2: i = 1
-///     // ite. 3: i = 0
-/// });
-/// ```
-/// 
-/// This is equivalent to the following regular for loop, but is usable in const context.
-/// ```
-/// for i in (0..3).rev() {
-///     // body
-/// }
-/// ```
-#[macro_export]
-macro_rules! const_for_rev {
-    ($var: ident; $range: expr => $body: expr) => {
+    ($var:ident in ($range:expr).rev().step_by($step_by:expr) => $body:expr) => {
         {
-            let mut $var = $range.end - 1;
-            let mut first_ite = true;
+            let mut $var = $range.end - $range.end % $step_by;
+            let mut __is_first_ite__ = true;
 
             loop {
-                if !first_ite {
-                    $var -= 1;
+                if !__is_first_ite__ {
+                    $var -= $step_by
                 }
-                first_ite = false;
-
-                $body;
+                __is_first_ite__ = false;
 
                 if $var <= $range.start {
                     break
                 }
+
+                $body
             }
         }
+    };
+
+    ($var:ident in ($range:expr).rev() => $body:expr) => {
+        const_for!($var in ($range).rev().step_by(1) => $body)
+    };
+
+    ($var:ident in ($range:expr).step_by($step_by:expr).rev() => $body:expr) => {
+        const_for!($var in ({($range.start + $range.end % $step_by)..($range.end - $range.end % $step_by)}).step_by($step_by).rev() => $body)
+    };
+
+    ($var:ident in $range:expr => $body:expr) => {
+        const_for!($var in ($range).step_by(1) => $body)
     };
 }
