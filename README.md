@@ -12,7 +12,7 @@
 
 ## Introduction
 
-This crate provides ergonomic for loops in const contexts using macros.
+This crate provides a macro for making ergonomic for loops in const.
 
 Regular for loops are not allowed in const contexts, because it relies on iterators, which are not available in const.\
 This is rather annoying when writing const functions, as you need to write custom for loops using 'loop' or 'while'.
@@ -55,7 +55,7 @@ If the body is a single statement, the curly braces are not needed, and the loop
 
 The reversed for loop is very similar to the normal one, except backwards:\
 
-    const_for_rev!(i in 0..5 => {
+    ctfor_rev!(i in 0..5 => {
         // Body
     });
 
@@ -97,8 +97,8 @@ After:
     const fn gen_white_pawn_attacks() -> [u64; 64] {
         let mut masks = [0; 64];
         
-        const_for!(rank in 0..8 => {
-            const_for!(file in 0..8 => {
+        ctfor!(rank in 0..8 => {
+            ctfor!(file in 0..8 => {
                 let index = (rank*8+file) as usize;
                 if file != 7 { masks[index] |= (1 << index) >> 7 as u64 }
                 if file != 0 { masks[index] |= (1 << index) >> 9 as u64 }

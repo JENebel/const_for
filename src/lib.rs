@@ -12,7 +12,7 @@
 /// ```
 /// # use const_for::*;
 /// let mut a = 0;
-/// const_for!(i in 0..5 => {
+/// ctfor!(i in 0..5 => {
 ///     a += i
 /// });
 /// assert!(a == 10)
@@ -31,19 +31,19 @@
 /// ```
 /// # use const_for::*;
 /// let mut a = 0;
-/// const_for!(i in 0..5 => a += i);
+/// ctfor!(i in 0..5 => a += i);
 /// assert!(a == 10)
 /// ```
 #[macro_export]
-macro_rules! const_for {
-    ($var:ident in ($range:expr).step_by($step_by:expr) => $body:expr) => {
+macro_rules! ctfor {
+    ($var:ident in ($range:expr).step_by($step:expr) => $body:expr) => {
         {
             let mut $var = $range.start;
             let mut __is_first_ite__ = true;
 
             loop {
                 if !__is_first_ite__ {
-                    $var += $step_by
+                    $var += $step
                 }
                 __is_first_ite__ = false;
 
@@ -56,18 +56,18 @@ macro_rules! const_for {
         }
     };
 
-    ($var:ident in ($range:expr).rev().step_by($step_by:expr) => $body:expr) => {
+    ($var:ident in ($range:expr).rev().step_by($step:expr) => $body:expr) => {
         {
-            let mut $var = $range.end - $range.end % $step_by;
+            let mut $var = $range.end - 1;
             let mut __is_first_ite__ = true;
 
             loop {
                 if !__is_first_ite__ {
-                    $var -= $step_by
+                    $var -= $step
                 }
                 __is_first_ite__ = false;
 
-                if $var <= $range.start {
+                if $var < $range.start {
                     break
                 }
 
@@ -77,14 +77,14 @@ macro_rules! const_for {
     };
 
     ($var:ident in ($range:expr).rev() => $body:expr) => {
-        const_for!($var in ($range).rev().step_by(1) => $body)
+        ctfor!($var in ($range).rev().step_by(1) => $body)
     };
 
-    ($var:ident in ($range:expr).step_by($step_by:expr).rev() => $body:expr) => {
-        const_for!($var in ({($range.start + $range.end % $step_by)..($range.end - $range.end % $step_by)}).step_by($step_by).rev() => $body)
+    ($var:ident in ($range:expr).step_by($step:expr).rev() => $body:expr) => {
+        ctfor!($var in ($range.start..$range.end - ($range.end - $range.start - 1) % $step).rev().step_by($step) => $body)
     };
 
     ($var:ident in $range:expr => $body:expr) => {
-        const_for!($var in ($range).step_by(1) => $body)
+        ctfor!($var in ($range).step_by(1) => $body)
     };
 }

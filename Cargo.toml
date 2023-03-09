@@ -1,5 +1,5 @@
 [package]
-name = "const_for"
+name = "const-for"
 version = "0.1.0"
 edition = "2021"
 authors = ["Joachim Enggård Nebel"]

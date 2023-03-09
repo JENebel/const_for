@@ -1,79 +1,65 @@
 use const_for::*;
 
 macro_rules! validate_loop {
-    ($($loop:tt)*) => {
-        let mut c_index = 0;
-        let mut c_values_hit = [0; 1000];
-        const_for!(i in $($loop)* => {
-            c_values_hit[c_index] = i;
-            c_index += 1;
+    (@impl $($loop:tt)*) => {
+        let mut c_values_hit = Vec::new();
+        ctfor!(i in $($loop)* => {
+            c_values_hit.push(i);
         });
 
-        let mut r_index = 0;
-        let mut r_values_hit = [0; 1000];
+        let mut r_values_hit = Vec::new();
         for i in $($loop)* {
-            r_values_hit[r_index] = i;
-            r_index += 1;
+            r_values_hit.push(i);
         };
 
-        assert!(c_index == r_index);
         assert!(c_values_hit == r_values_hit);
+    };
+
+    ($step: expr, $($loop:tt)*) => {
+        validate_loop!(@impl ($($loop)*).step_by(1));
+        validate_loop!(@impl ($($loop)*).step_by(1).rev());
+        validate_loop!(@impl ($($loop)*).rev().step_by(1));
+    };
+
+    ($($loop:tt)*) => {
+        validate_loop!(@impl $($loop)*);
+        validate_loop!(@impl ($($loop)*).rev());
+        
+        validate_loop!(1, $($loop)*);
+        validate_loop!(2, $($loop)*);
+        validate_loop!(3, $($loop)*);
+        validate_loop!(4, $($loop)*);
+        validate_loop!(8, $($loop)*);
+        validate_loop!(15, $($loop)*);
+        validate_loop!(17, $($loop)*);
+        validate_loop!(32, $($loop)*);
+        validate_loop!(45, $($loop)*);
+        validate_loop!(150, $($loop)*);
     };
 }
 
 #[allow(unused_parens)]
 #[test]
-fn normal_for() {
+fn test_const_for() {
+    validate_loop!(-10..10);
     validate_loop!(0..10);
     validate_loop!(-10..10);
     validate_loop!((0..10));
     validate_loop!(100..10);
-}
-
-#[allow(unused_parens)]
-#[test]
-fn normal_rev() {
-    validate_loop!((0..10).rev());
-    validate_loop!((-10..10).rev());
-    validate_loop!((0..10).rev());
-    validate_loop!((100..10).rev());
-}
-
-#[allow(unused_parens)]
-#[test]
-fn custom_step_by() {
-    validate_loop!((0..10).step_by(1));
-    validate_loop!((-10..10).step_by(2));
-    validate_loop!((0..10).step_by(3));
-    validate_loop!((0..100).step_by(32));
-    validate_loop!((100..10).step_by(4));
-}
-
-#[allow(unused_parens)]
-#[test]
-fn rev_and_custom_step_by() {
-    /*validate_loop!((0..10).rev().step_by(1));
-    validate_loop!((-10..10).rev().step_by(2));
-    validate_loop!((0..10).rev().step_by(3));
-    validate_loop!((0..100).rev().step_by(32));
-    validate_loop!((100..10).rev().step_by(4));
-    validate_loop!((0..10).step_by(1).rev());
-    validate_loop!((-10..10).step_by(2).rev());*/
-
-    /*println!("Const");
-    const_for!(i in (0..100).rev().step_by(32) => {
-        println!("{i}")
-    });*/
-    const_for!(i in (0..10).step_by(3).rev() => {
-
-    })
-
-    /*validate_loop!((0..10).step_by(3).rev());
-    validate_loop!((0..100).step_by(32).rev());
-    validate_loop!((100..10).step_by(4).rev());*/
+    validate_loop!(-15..-12);
+    validate_loop!(-14..0);
+    validate_loop!(-100..-50);
+    validate_loop!(-14..200);
+    validate_loop!(1..11110);
 }
 
 #[test]
-fn brian() {
-    println!("{}", 1.max(3 % 2))
+const fn vailable_in_const() {
+    let mut a = 0;
+
+    ctfor!(i in 0..100 => {
+        a += 1;
+    });
+
+    assert!(a == 100)
 }
