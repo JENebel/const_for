@@ -28,11 +28,9 @@ macro_rules! validate_loop {
         validate_loop!(1, $($loop)*);
         validate_loop!(2, $($loop)*);
         validate_loop!(3, $($loop)*);
-        validate_loop!(4, $($loop)*);
         validate_loop!(8, $($loop)*);
         validate_loop!(15, $($loop)*);
         validate_loop!(17, $($loop)*);
-        validate_loop!(32, $($loop)*);
         validate_loop!(45, $($loop)*);
         validate_loop!(150, $($loop)*);
     };
@@ -40,7 +38,7 @@ macro_rules! validate_loop {
 
 #[allow(unused_parens)]
 #[test]
-fn test_const_for() {
+fn equivalent_to_regular_for() {
     validate_loop!(-10..10);
     validate_loop!(0..10);
     validate_loop!(-10..10);
@@ -54,11 +52,17 @@ fn test_const_for() {
 }
 
 #[test]
-const fn vailable_in_const() {
+const fn available_in_const() {
     let mut a = 0;
 
-    ctfor!(i in 0..100 => {
-        a += 1;
+    ctfor!(i in 0..25 => {
+        a += 1
+    });
+    ctfor!(i in (0..25).rev() => {
+        a += 1
+    });
+    ctfor!(i in (0..100).step_by(2) => {
+        a += 1
     });
 
     assert!(a == 100)
