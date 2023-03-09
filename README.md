@@ -16,6 +16,8 @@ This is necessary, as normally they depend on non-const iterators. But they can 
 
 The main restriction is that the macro only supports standard(exclusive) ranges, eg. 0..10 and -5..5, but not ..5 or 0..=10. This is mostly a limit of current stable Rust, and wont be possible without using nightly before #![feature(const_range_bounds)] becomes stable.
 
+The name of the macro 'ctfor' is derived from 'compile time for', and was chosen because 'ctfor' is short, and because there already exists a crate called 'cfor' with a macro of the same name.
+
 ```rust
 # use const_for::*;
 let mut a = 0;
