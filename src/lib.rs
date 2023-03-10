@@ -13,7 +13,7 @@
 /// ```
 /// # use const_for::*;
 /// let mut a = 0;
-/// ctfor!(i in 0..5 => {
+/// const_for!(i in 0..5 => {
 ///     a += i
 /// });
 /// assert!(a == 10)
@@ -34,7 +34,7 @@
 /// ```
 /// # use const_for::*;
 /// let mut v = Vec::new();
-/// ctfor!(i in (0..5).step_by(2) => {
+/// const_for!(i in (0..5).step_by(2) => {
 ///     v.push(i)
 /// });
 /// assert!(v == vec![0, 2, 4])
@@ -47,7 +47,7 @@
 /// ```
 /// # use const_for::*;
 /// let mut v = Vec::new();
-/// ctfor!(i in (0..5).rev() => {
+/// const_for!(i in (0..5).rev() => {
 ///     v.push(i)
 /// });
 /// assert!(v == vec![4, 3, 2, 1, 0])
@@ -61,20 +61,20 @@
 /// # use const_for::*;
 /// // Reverse, then change step size
 /// let mut v = Vec::new();
-/// ctfor!(i in (0..10).rev().step_by(4) => {
+/// const_for!(i in (0..10).rev().step_by(4) => {
 ///     v.push(i)
 /// });
 /// assert!(v == vec![9, 5, 1]);
 /// 
 /// // Change step size, then reverse
 /// let mut v = Vec::new();
-/// ctfor!(i in (0..10).step_by(4).rev() => {
+/// const_for!(i in (0..10).step_by(4).rev() => {
 ///     v.push(i)
 /// });
 /// assert!(v == vec![8, 4, 0])
 /// ```
 #[macro_export]
-macro_rules! ctfor {
+macro_rules! const_for {
     ($var:ident in ($range:expr).step_by($step:expr) => $body:expr) => {
         {
             let _: usize = $step;
@@ -120,15 +120,15 @@ macro_rules! ctfor {
     };
 
     ($var:ident in ($range:expr).rev() => $body:expr) => {
-        ctfor!($var in ($range).rev().step_by(1) => $body)
+        const_for!($var in ($range).rev().step_by(1) => $body)
     };
 
     ($var:ident in ($range:expr).step_by($step:expr).rev() => $body:expr) => {
         // A little janky, but imitates the chained functions
-        ctfor!($var in ($range.start..$range.end - ($range.end - $range.start - 1) % $step).rev().step_by($step) => $body)
+        const_for!($var in ($range.start..$range.end - ($range.end - $range.start - 1) % $step).rev().step_by($step) => $body)
     };
 
     ($var:ident in $range:expr => $body:expr) => {
-        ctfor!($var in ($range).step_by(1) => $body)
+        const_for!($var in ($range).step_by(1) => $body)
     };
 }

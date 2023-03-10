@@ -16,12 +16,10 @@ This is necessary, as normally they depend on non-const iterators. But they can 
 
 The main restriction is that the macro only supports standard(exclusive) ranges, eg. 0..10 and -5..5, but not ..5 or 0..=10. This is mostly a limit of current stable Rust, and wont be possible without using nightly before #![feature(const_range_bounds)] becomes stable.
 
-The name of the macro 'ctfor' is derived from 'compile time for', and was chosen because 'ctfor' is short, and because there already exists a crate called 'cfor' with a macro of the same name.
-
 ```rust
 # use const_for::*;
 let mut a = 0;
-ctfor!(i in 0..5 => {
+const_for!(i in 0..5 => {
     a += i
 });
 assert!(a == 10)
@@ -44,7 +42,7 @@ A custom step size can be set:
 ```rust
 # use const_for::*;
 let mut v = Vec::new();
-ctfor!(i in (0..5).step_by(2) => {
+const_for!(i in (0..5).step_by(2) => {
     v.push(i)
 });
 assert!(v == vec![0, 2, 4])
@@ -68,7 +66,7 @@ Iteration can be reversed:
 ```rust
 # use const_for::*;
 let mut v = Vec::new();
-ctfor!(i in (0..5).rev() => {
+const_for!(i in (0..5).rev() => {
     v.push(i)
 });
 assert!(v == vec![4, 3, 2, 1, 0])
@@ -94,14 +92,14 @@ It is possible to combine rev and step_by, but each can only be appended once. S
 # use const_for::*;
 // Reverse, then change step size
 let mut v = Vec::new();
-ctfor!(i in (0..10).rev().step_by(4) => {
+const_for!(i in (0..10).rev().step_by(4) => {
     v.push(i)
 });
 assert!(v == vec![9, 5, 1]);
 
 // Change step size, then reverse
 let mut v = Vec::new();
-ctfor!(i in (0..10).step_by(4).rev() => {
+const_for!(i in (0..10).step_by(4).rev() => {
     v.push(i)
 });
 assert!(v == vec![8, 4, 0])
@@ -143,8 +141,8 @@ After:
 const fn gen_white_pawn_attacks() -> [u64; 64] {
     let mut masks = [0; 64];
     
-    ctfor!(rank in 0..8 => {
-        ctfor!(file in 0..8 => {
+    const_for!(rank in 0..8 => {
+        const_for!(file in 0..8 => {
             let index = (rank*8+file) as usize;
             if file != 7 { masks[index] |= (1 << index) >> 7 as u64 }
             if file != 0 { masks[index] |= (1 << index) >> 9 as u64 }

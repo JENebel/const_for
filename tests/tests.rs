@@ -3,7 +3,7 @@ use const_for::*;
 macro_rules! validate_loop {
     (@impl $($loop:tt)*) => {
         let mut c_values_hit = Vec::new();
-        ctfor!(i in $($loop)* => {
+        const_for!(i in $($loop)* => {
             c_values_hit.push(i);
         });
 
@@ -55,13 +55,13 @@ fn equivalent_to_regular_for() {
 const fn available_in_const() {
     let mut a = 0;
 
-    ctfor!(i in 0..25 => {
+    const_for!(i in 0..25 => {
         a += 1
     });
-    ctfor!(i in (0..25).rev() => {
+    const_for!(i in (0..25).rev() => {
         a += 1
     });
-    ctfor!(i in (0..100).step_by(2) => {
+    const_for!(i in (0..100).step_by(2) => {
         a += 1
     });
 
