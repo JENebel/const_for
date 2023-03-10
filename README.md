@@ -17,7 +17,7 @@ This is necessary, as normally they depend on non-const iterators. But they can 
 The main restriction is that the macro only supports standard(exclusive) ranges, eg. 0..10 and -5..5, but not ..5 or 0..=10. This is mostly a limit of current stable Rust, and wont be possible without using nightly before #![feature(const_range_bounds)] becomes stable.
 
 ```rust
-# use const_for::*;
+use const_for::*;
 let mut a = 0;
 const_for!(i in 0..5 => {
     a += i
@@ -40,7 +40,7 @@ assert!(a == 10)
 A custom step size can be set:
 
 ```rust
-# use const_for::*;
+use const_for::*;
 let mut v = Vec::new();
 const_for!(i in (0..5).step_by(2) => {
     v.push(i)
@@ -64,7 +64,7 @@ assert!(v == vec![0, 2, 4])
 Iteration can be reversed:
 
 ```rust
-# use const_for::*;
+use const_for::*;
 let mut v = Vec::new();
 const_for!(i in (0..5).rev() => {
     v.push(i)
@@ -76,7 +76,6 @@ The loop behaves as if the function was called on the range, but it is implement
 It is equivalent to the following non-const loop:
 
 ```rust
-# use const_for::*;
 let mut v = Vec::new();
 for i in (0..5).rev() {
     v.push(i)
@@ -89,7 +88,7 @@ assert!(v == vec![4, 3, 2, 1, 0])
 It is possible to combine rev and step_by, but each can only be appended once. So the following two examples are the only legal combinations.
 
 ```rust
-# use const_for::*;
+use const_for::*;
 // Reverse, then change step size
 let mut v = Vec::new();
 const_for!(i in (0..10).rev().step_by(4) => {
@@ -137,7 +136,7 @@ const fn gen_white_pawn_attacks() -> [u64; 64] {
 After:
 
 ```rust
-# use const_for::*;
+use const_for::*;
 const fn gen_white_pawn_attacks() -> [u64; 64] {
     let mut masks = [0; 64];
     
