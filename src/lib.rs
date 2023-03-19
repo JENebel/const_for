@@ -75,7 +75,7 @@
 /// ```
 #[macro_export]
 macro_rules! const_for {
-    ($var:ident in ($range:expr).step_by($step:expr) => $body:expr) => {
+    ($var:ident in ($range:expr).step_by($step:expr) => $body:block) => {
         {
             let _: usize = $step;
             let mut $var = $range.start;
@@ -98,7 +98,7 @@ macro_rules! const_for {
         }
     };
 
-    ($var:ident in ($range:expr).rev().step_by($step:expr) => $body:expr) => {
+    ($var:ident in ($range:expr).rev().step_by($step:expr) => $body:block) => {
         {
             let _: usize = $step;
             let mut $var = $range.end - 1;
@@ -119,16 +119,16 @@ macro_rules! const_for {
         }
     };
 
-    ($var:ident in ($range:expr).rev() => $body:expr) => {
+    ($var:ident in ($range:expr).rev() => $body:block) => {
         const_for!($var in ($range).rev().step_by(1) => $body)
     };
 
-    ($var:ident in ($range:expr).step_by($step:expr).rev() => $body:expr) => {
+    ($var:ident in ($range:expr).step_by($step:expr).rev() => $body:block) => {
         // A little janky, but imitates the chained functions
         const_for!($var in ($range.start..$range.end - ($range.end - $range.start - 1) % $step).rev().step_by($step) => $body)
     };
 
-    ($var:ident in $range:expr => $body:expr) => {
+    ($var:ident in $range:expr => $body:block) => {
         const_for!($var in ($range).step_by(1) => $body)
     };
 }

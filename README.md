@@ -104,7 +104,7 @@ assert!(v == vec![8, 4, 0])
 
 Here is an example of how this crate helped make some actual code much nicer and readable.
 
-The code was taken (and edited a bit for clarity) from the [Cadabra](https://github.com/JENebel/Cadabra/blob/master/prepare_constants.rs) chess engine.
+The code was taken (and edited a bit for clarity) from the [Cadabra](https://github.com/JENebel/Cadabra/) chess engine.
 
 Before:
 
