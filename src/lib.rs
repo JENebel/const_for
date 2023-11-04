@@ -108,6 +108,7 @@
 //! You can use mutable and wildcard variables as the loop variable, and they act as expected.
 //! 
 //! ```
+//! // Mutable variable
 //! # use const_for::*;
 //! let mut v = Vec::new();
 //! const_for!(mut i in (0..4) => {
@@ -116,6 +117,7 @@
 //! });
 //! assert!(v == vec![0, 2, 4, 6]);
 //! 
+//! // Wildcard variable
 //! let mut a = 0;
 //! const_for!(_ in 0..5 => 
 //!    a += 1
@@ -130,7 +132,7 @@
 //! let mut a = 0;
 //! const_for!(_ in 0..5 => a += 1);
 //! 
-//! # unsafe fn unsafe_function() {}
+//! unsafe fn unsafe_function() {}
 //! const_for!(_ in 0..5 => unsafe {
 //!    unsafe_function()
 //! });
@@ -265,6 +267,7 @@
 /// You can use mutable and wildcard variables as the loop variable, and they act as expected.
 /// 
 /// ```
+/// // Mutable variable
 /// # use const_for::*;
 /// let mut v = Vec::new();
 /// const_for!(mut i in (0..4) => {
@@ -273,6 +276,7 @@
 /// });
 /// assert!(v == vec![0, 2, 4, 6]);
 /// 
+/// // Wildcard variable
 /// let mut a = 0;
 /// const_for!(_ in 0..5 => 
 ///    a += 1
@@ -287,7 +291,7 @@
 /// let mut a = 0;
 /// const_for!(_ in 0..5 => a += 1);
 /// 
-/// # unsafe fn unsafe_function() {}
+/// unsafe fn unsafe_function() {}
 /// const_for!(_ in 0..5 => unsafe {
 ///    unsafe_function()
 /// });
@@ -298,6 +302,7 @@ macro_rules! const_for {
         {
             let _: usize = $step;
             let mut ite = $range.start;
+            let end = $range.end;
             let mut is_first = true;
 
             loop {
@@ -308,7 +313,7 @@ macro_rules! const_for {
 
                 let $var = ite;
 
-                if ite >= $range.end {
+                if ite >= end {
                     break
                 }
 
@@ -321,6 +326,7 @@ macro_rules! const_for {
         {
             let _: usize = $step;
             let mut ite = $range.end - 1;
+            let start = $range.start;
             let mut is_first = true;
 
             loop {
@@ -331,7 +337,7 @@ macro_rules! const_for {
 
                 let $var = ite;
 
-                if ite < $range.start {
+                if ite < start {
                     break
                 }
 

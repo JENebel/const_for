@@ -49,6 +49,18 @@ fn equivalent_to_regular_for() {
     validate_loop!(-100..-50);
     validate_loop!(-14..200);
     validate_loop!(1..11110);
+
+    let mut a = 113;
+    for i in 0..a-100 {
+        a += i;
+    }
+    assert_eq!(a, 191);
+
+    let mut a = 113;
+    const_for!(i in 0..a-100 => {
+        a += i;
+    });
+    assert_eq!(a, 191);
 }
 
 #[test]
@@ -73,6 +85,6 @@ const fn available_in_const() {
     const_for!(_ in (0..7).rev() => {
         a += 1
     });
-    
-    assert!(a == 113)
+
+    assert!(a == 25 + 25 + 50 + 6 + 7);
 }
