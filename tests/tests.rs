@@ -49,18 +49,33 @@ fn equivalent_to_regular_for() {
     validate_loop!(-100..-50);
     validate_loop!(-14..200);
     validate_loop!(1..11110);
+}
 
-    let mut a = 113;
-    for i in 0..a-100 {
-        a += i;
-    }
-    assert_eq!(a, 191);
-
+#[test]
+fn capture_range_at_beginning() {
     let mut a = 113;
     const_for!(i in 0..a-100 => {
         a += i;
     });
-    assert_eq!(a, 191);
+    let mut b = 113;
+    for i in 0..b-100 {
+        b += i;
+    }
+    assert_eq!(a, b);
+
+    let mut a = 0;
+    let mut step = 1;
+    const_for!(_ in (0..10).step_by(step) => {
+        a += step;
+        step += 1;
+    });
+    let mut b = 0;
+    let mut step = 1;
+    for _ in (0..10).step_by(step) {
+        b += step;
+        step += 1;
+    }
+    assert_eq!(a, b);
 }
 
 #[test]

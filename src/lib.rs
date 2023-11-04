@@ -301,19 +301,20 @@ macro_rules! const_for {
     ($var:pat_param in ($range:expr).step_by($step:expr) => $body:stmt) => {
         {
             let _: usize = $step;
-            let mut ite = $range.start;
-            let end = $range.end;
-            let mut is_first = true;
+            let mut __ite = $range.start;
+            let __end = $range.end;
+            let mut __is_first = true;
+            let __step = $step;
 
             loop {
-                if !is_first {
-                    ite += $step
+                if !__is_first {
+                    __ite += __step
                 }
-                is_first = false;
+                __is_first = false;
 
-                let $var = ite;
+                let $var = __ite;
 
-                if ite >= end {
+                if __ite >= __end {
                     break
                 }
 
@@ -325,19 +326,20 @@ macro_rules! const_for {
     ($var:pat_param in ($range:expr).rev().step_by($step:expr) => $body:stmt) => {
         {
             let _: usize = $step;
-            let mut ite = $range.end - 1;
-            let start = $range.start;
-            let mut is_first = true;
+            let mut __ite = $range.end - 1;
+            let __start = $range.start;
+            let mut __is_first = true;
+            let __step = $step;
 
             loop {
-                if !is_first {
-                    ite -= $step
+                if !__is_first {
+                    __ite -= __step
                 }
-                is_first = false;
+                __is_first = false;
 
-                let $var = ite;
+                let $var = __ite;
 
-                if ite < start {
+                if __ite < __start {
                     break
                 }
 
