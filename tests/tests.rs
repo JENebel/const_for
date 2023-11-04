@@ -55,15 +55,24 @@ fn equivalent_to_regular_for() {
 const fn available_in_const() {
     let mut a = 0;
 
-    const_for!(i in 0..25 => {
+    const_for!(_ in 0..25 => {
         a += 1
     });
-    const_for!(i in (0..25).rev() => {
+    const_for!(_ in (0..25).rev() => {
         a += 1
     });
-    const_for!(i in (0..100).step_by(2) => 
+    const_for!(_ in (0..100).step_by(2) => 
         a += 1
     );
+
+    const_for!(mut i in (0..3) => {
+        i += 1;
+        a += i
+    });
+
+    const_for!(_ in (0..7).rev() => {
+        a += 1
+    });
     
-    assert!(a == 100)
+    assert!(a == 113)
 }

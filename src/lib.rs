@@ -103,17 +103,35 @@
 //! assert!(v == vec![8, 4, 0])
 //! ```
 //! 
-//! ## Note
+//! ## Notes
+//! 
+//! You can use mutable and wildcard variables as the loop variable, and they act as expected.
+//! 
+//! ```
+//! # use const_for::*;
+//! let mut v = Vec::new();
+//! const_for!(mut i in (0..4) => {
+//!     i *= 2;
+//!     v.push(i)
+//! });
+//! assert!(v == vec![0, 2, 4, 6]);
+//! 
+//! let mut a = 0;
+//! const_for!(_ in 0..5 => 
+//!    a += 1
+//! );
+//! assert!(a == 5)
+//! ```
 //! 
 //! The body of the loop can be any statement. This means that the following is legal, even though it is not in a regular for loop.
 //! 
 //! ```
 //! # use const_for::*;
 //! let mut a = 0;
-//! const_for!(i in 0..5 => a += i);
+//! const_for!(_ in 0..5 => a += 1);
 //! 
 //! # unsafe fn unsafe_function() {}
-//! const_for!(i in 0..5 => unsafe {
+//! const_for!(_ in 0..5 => unsafe {
 //!    unsafe_function()
 //! });
 //! ```
@@ -242,36 +260,55 @@
 /// assert!(v == vec![8, 4, 0])
 /// ```
 /// 
-/// ## Note
+/// ## Notes
+/// 
+/// You can use mutable and wildcard variables as the loop variable, and they act as expected.
+/// 
+/// ```
+/// # use const_for::*;
+/// let mut v = Vec::new();
+/// const_for!(mut i in (0..4) => {
+///     i *= 2;
+///     v.push(i)
+/// });
+/// assert!(v == vec![0, 2, 4, 6]);
+/// 
+/// let mut a = 0;
+/// const_for!(_ in 0..5 => 
+///    a += 1
+/// );
+/// assert!(a == 5)
+/// ```
 /// 
 /// The body of the loop can be any statement. This means that the following is legal, even though it is not in a regular for loop.
 /// 
 /// ```
 /// # use const_for::*;
 /// let mut a = 0;
-/// const_for!(i in 0..5 => a += i);
+/// const_for!(_ in 0..5 => a += 1);
 /// 
 /// # unsafe fn unsafe_function() {}
-/// const_for!(i in 0..5 => unsafe {
+/// const_for!(_ in 0..5 => unsafe {
 ///    unsafe_function()
 /// });
+/// ```
 #[macro_export]
 macro_rules! const_for {
-    ($var:ident in ($range:expr).step_by($step:expr) => $body:stmt) => {
+    ($var:pat_param in ($range:expr).step_by($step:expr) => $body:stmt) => {
         {
             let _: usize = $step;
-            let mut $var = $range.start;
-            let mut __is_first = true;
+            let mut ite = $range.start;
+            let mut is_first = true;
 
             loop {
-                if !__is_first {
-                    $var += $step
+                if !is_first {
+                    ite += $step
                 }
-                __is_first = false;
+                is_first = false;
 
-                let $var = $var;
+                let $var = ite;
 
-                if $var >= $range.end {
+                if ite >= $range.end {
                     break
                 }
 
@@ -280,19 +317,21 @@ macro_rules! const_for {
         }
     };
 
-    ($var:ident in ($range:expr).rev().step_by($step:expr) => $body:stmt) => {
+    ($var:pat_param in ($range:expr).rev().step_by($step:expr) => $body:stmt) => {
         {
             let _: usize = $step;
-            let mut $var = $range.end - 1;
-            let mut __is_first = true;
+            let mut ite = $range.end - 1;
+            let mut is_first = true;
 
             loop {
-                if !__is_first {
-                    $var -= $step
+                if !is_first {
+                    ite -= $step
                 }
-                __is_first = false;
+                is_first = false;
 
-                if $var < $range.start {
+                let $var = ite;
+
+                if ite < $range.start {
                     break
                 }
 
@@ -301,16 +340,15 @@ macro_rules! const_for {
         }
     };
 
-    ($var:ident in ($range:expr).rev() => $body:stmt) => {
+    ($var:pat_param in ($range:expr).rev() => $body:stmt) => {
         const_for!($var in ($range).rev().step_by(1) => $body)
     };
 
-    ($var:ident in ($range:expr).step_by($step:expr).rev() => $body:stmt) => {
-        // A little janky, but imitates the chained functions
+    ($var:pat_param in ($range:expr).step_by($step:expr).rev() => $body:stmt) => {
         const_for!($var in ($range.start..$range.end - ($range.end - $range.start - 1) % $step).rev().step_by($step) => $body)
     };
 
-    ($var:ident in $range:expr => $body:stmt) => {
+    ($var:pat_param in $range:expr => $body:stmt) => {
         const_for!($var in ($range).step_by(1) => $body)
     };
 }
