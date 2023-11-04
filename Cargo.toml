@@ -7,5 +7,5 @@ description = "For loop in const implemented with a macro."
 readme = "README.md"
 repository = "https://github.com/JENebel/const_for"
 license = "MIT"
-keywords = ["const", "for", "loop", "const-fn" "const_for"]
+keywords = ["const", "for", "loop", "const-fn", "const_for"]
 categories = ["development-tools::build-utils"]
