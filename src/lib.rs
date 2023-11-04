@@ -1,3 +1,4 @@
+//! # Const for
 //! [![GitHub](https://img.shields.io/badge/GitHub-black?logo=github)](https://github.com/JENebel/const_for)
 //! [![crates.io](https://img.shields.io/crates/v/const_for?logo=rust&logoColor=b7410e)](http://crates.io/crates/const_for)
 //! [![Docs](https://img.shields.io/docsrs/const_for/latest?logo=Docs.rs)](https://docs.rs/const_for/latest)
