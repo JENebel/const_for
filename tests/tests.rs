@@ -61,9 +61,9 @@ const fn available_in_const() {
     const_for!(i in (0..25).rev() => {
         a += 1
     });
-    const_for!(i in (0..100).step_by(2) => {
+    const_for!(i in (0..100).step_by(2) => 
         a += 1
-    });
-
+    );
+    
     assert!(a == 100)
 }
