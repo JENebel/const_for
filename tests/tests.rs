@@ -1,5 +1,3 @@
-#![feature(type_name_of_val)]
-
 use const_for::*;
 
 macro_rules! validate_loop {

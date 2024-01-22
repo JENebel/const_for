@@ -1,5 +1,3 @@
-#![feature(type_name_of_val)]
-
 //! # Const for
 //! [![GitHub](https://img.shields.io/badge/GitHub-black?logo=github)](https://github.com/JENebel/const_for)
 //! [![crates.io](https://img.shields.io/crates/v/const_for?logo=rust&logoColor=b7410e)](http://crates.io/crates/const_for)
