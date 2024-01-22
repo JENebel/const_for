@@ -1,3 +1,5 @@
+#![feature(type_name_of_val)]
+
 //! # Const for
 //! [![GitHub](https://img.shields.io/badge/GitHub-black?logo=github)](https://github.com/JENebel/const_for)
 //! [![crates.io](https://img.shields.io/crates/v/const_for?logo=rust&logoColor=b7410e)](http://crates.io/crates/const_for)
@@ -327,22 +329,26 @@ macro_rules! const_for {
     ($var:pat_param in ($range:expr).rev().step_by($step:expr) => $body:stmt) => {
         {
             let _: usize = $step;
-            let mut __ite = $range.end - 1;
+            let mut __ite = $range.end;
             let __start = $range.start;
             let mut __is_first = true;
             let __step = $step;
 
             loop {
                 if !__is_first {
+                    if __step + __start >= __ite {
+                        break
+                    }
                     __ite -= __step
                 }
                 __is_first = false;
 
-                let $var = __ite;
-
-                if __ite < __start {
+                if __ite <= __start {
                     break
                 }
+
+                // cannot underflow as __ite > __start
+                let $var = __ite - 1;
 
                 $body
             }

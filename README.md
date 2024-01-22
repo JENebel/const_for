@@ -132,6 +132,8 @@ const_for!(_ in 0..5 => unsafe {
 });
 ```
 
+If the beginning of the range plus the step overflows the integer behaviour is undefined.
+
 #### Real world example
 
 Here is an example of how this crate helped make some actual code much nicer and readable.
