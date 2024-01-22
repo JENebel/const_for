@@ -132,7 +132,7 @@ const_for!(_ in 0..5 => unsafe {
 });
 ```
 
-If the beginning of the range plus the step overflows the integer behaviour is undefined.
+If the beginning of the range plus the step overflows the integer, behaviour is undefined.
 
 #### Real world example
 

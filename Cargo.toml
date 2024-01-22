@@ -1,6 +1,6 @@
 [package]
 name = "const_for"
-version = "0.1.3"
+version = "0.1.4"
 edition = "2021"
 authors = ["Joachim Enggård Nebel"]
 description = "For loop in const implemented with a macro."
