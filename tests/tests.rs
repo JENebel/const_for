@@ -103,3 +103,18 @@ const fn available_in_const() {
 
     assert!(a == 25 + 25 + 50 + 6 + 7);
 }
+
+#[test]
+fn no_underflow() {
+    const_for!(_ in (0u64..1).rev() => {});
+    let mut iterations: u64 = 0;
+    const_for!(_ in (i8::MIN..0).rev() => iterations += 1);
+    assert_eq!(iterations, 128);
+}
+
+#[test]
+fn signed_can_go_negative() {
+    let mut actual = Vec::new();
+    const_for!(i in (-10..11).rev().step_by(5) => actual.push(i));
+    assert_eq!(actual, vec![10, 5, 0, -5, -10]);
+}
