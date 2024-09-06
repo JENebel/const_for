@@ -188,7 +188,7 @@
 //!     masks
 //! }
 //! ```
-
+#![no_std]
 
 /// A for loop that is usable in const contexts.
 /// 
