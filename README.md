@@ -1,6 +1,5 @@
-# const_for
+# An ergonomic for loop for const contexts
 
-## Const for
 [![GitHub](https://img.shields.io/badge/GitHub-black?logo=github)](https://github.com/JENebel/const_for)
 [![crates.io](https://img.shields.io/crates/v/const_for?logo=rust&logoColor=b7410e)](http://crates.io/crates/const_for)
 [![Docs](https://img.shields.io/docsrs/const_for/latest?logo=Docs.rs)](https://docs.rs/const_for/latest)
@@ -8,12 +7,12 @@
 Regular for loops are not allowed in const contexts, because it relies on iterators, which are not available in const.\
 This is rather annoying when writing const functions, as you need to write custom for loops using 'loop' or 'while'.
 
-This crate provides a macro implementation of a for loop over a range that is usable in const contexts.\
+This crate provides an ergonomic macro implementation of a for loop over a range, that is usable in const and `no_std` contexts.\
 The aim is to imitate a regular for loop as closely as possible. It handles break and continue correctly, and the variable is immutable in the body.\
 To make the for loop as versatile as possible, it comes with macro variants to handle .rev() and step_by(x), which imitates the respective function calls.
 This is necessary, as normally they depend on non-const iterators. But they can be used here with identical syntax.
 
-The main restriction is that the macro only supports standard(exclusive) ranges, eg. 0..10 and -5..5, but not ..5 or 0..=10. This is mostly a limit of current stable Rust, and wont be possible without using nightly before #![feature(const_range_bounds)] becomes stable.
+The main restriction is that the macro only supports standard, exclusive, ranges, eg. 0..10 and -5..5, but not ..5 or 0..=10.
 
 ```rust
 let mut a = 0;
@@ -132,7 +131,7 @@ const_for!(_ in 0..5 => unsafe {
 });
 ```
 
-If the beginning of the range plus the step overflows the integer, behaviour is undefined.
+If the beginning of the range plus the step overflows the integer behaviour is undefined.
 
 #### Real world example
 
