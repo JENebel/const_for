@@ -1,4 +1,4 @@
-use const_for::*;
+use const_for::const_for;
 
 macro_rules! validate_loop {
     (@impl $($loop:tt)*) => {
