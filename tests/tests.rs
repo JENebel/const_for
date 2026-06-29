@@ -1,9 +1,7 @@
-use const_for::const_for;
-
 macro_rules! validate_loop {
     (@impl $($loop:tt)*) => {
         let mut c_values_hit = Vec::new();
-        const_for!(i in $($loop)* => {
+        const_for::const_for!(i in $($loop)* => {
             c_values_hit.push(i);
         });
 
@@ -54,7 +52,7 @@ fn equivalent_to_regular_for() {
 #[test]
 fn capture_range_at_beginning() {
     let mut a = 113;
-    const_for!(i in 0..a-100 => {
+    const_for::const_for!(i in 0..a-100 => {
         a += i;
     });
     let mut b = 113;
@@ -65,7 +63,7 @@ fn capture_range_at_beginning() {
 
     let mut a = 0;
     let mut step = 1;
-    const_for!(_ in (0..10).step_by(step) => {
+    const_for::const_for!(_ in (0..10).step_by(step) => {
         a += step;
         step += 1;
     });
@@ -82,22 +80,22 @@ fn capture_range_at_beginning() {
 const fn available_in_const() {
     let mut a = 0;
 
-    const_for!(_ in 0..25 => {
+    const_for::const_for!(_ in 0..25 => {
         a += 1
     });
-    const_for!(_ in (0..25).rev() => {
+    const_for::const_for!(_ in (0..25).rev() => {
         a += 1
     });
-    const_for!(_ in (0..100).step_by(2) => 
+    const_for::const_for!(_ in (0..100).step_by(2) => 
         a += 1
     );
 
-    const_for!(mut i in (0..3) => {
+    const_for::const_for!(mut i in (0..3) => {
         i += 1;
         a += i
     });
 
-    const_for!(_ in (0..7).rev() => {
+    const_for::const_for!(_ in (0..7).rev() => {
         a += 1
     });
 
@@ -106,15 +104,15 @@ const fn available_in_const() {
 
 #[test]
 fn no_underflow() {
-    const_for!(_ in (0u64..1).rev() => {});
+    const_for::const_for!(_ in (0u64..1).rev() => {});
     let mut iterations: u64 = 0;
-    const_for!(_ in (i8::MIN..0).rev() => iterations += 1);
+    const_for::const_for!(_ in (i8::MIN..0).rev() => iterations += 1);
     assert_eq!(iterations, 128);
 }
 
 #[test]
 fn signed_can_go_negative() {
     let mut actual = Vec::new();
-    const_for!(i in (-10..11).rev().step_by(5) => actual.push(i));
+    const_for::const_for!(i in (-10..11).rev().step_by(5) => actual.push(i));
     assert_eq!(actual, vec![10, 5, 0, -5, -10]);
 }

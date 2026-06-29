@@ -1,6 +1,6 @@
-/// A for loop that is usable in const contexts.
+/// A `for` loop that is usable in const contexts.
 /// 
-/// See the [crate-level documentation](crate) for more information. 
+/// See the [crate-level documentation](crate) for more information.
 #[macro_export]
 macro_rules! const_for {
     ($var:pat_param in ($range:expr).step_by($step:expr) => $body:stmt) => {
@@ -58,14 +58,14 @@ macro_rules! const_for {
     };
 
     ($var:pat_param in ($range:expr).rev() => $body:stmt) => {
-        const_for!($var in ($range).rev().step_by(1) => $body)
+        $crate::const_for!($var in ($range).rev().step_by(1) => $body)
     };
 
     ($var:pat_param in ($range:expr).step_by($step:expr).rev() => $body:stmt) => {
-        const_for!($var in ($range.start..$range.end - ($range.end - $range.start - 1) % $step).rev().step_by($step) => $body)
+        $crate::const_for!($var in ($range.start..$range.end - ($range.end - $range.start - 1) % $step).rev().step_by($step) => $body)
     };
 
     ($var:pat_param in $range:expr => $body:stmt) => {
-        const_for!($var in ($range).step_by(1) => $body)
+        $crate::const_for!($var in ($range).step_by(1) => $body)
     };
 }
