@@ -1,13 +1,14 @@
 /// A `for` loop that is usable in const contexts.
-/// 
+///
 /// See the [crate-level documentation](crate) for more information.
 #[macro_export]
 macro_rules! const_for {
     ($var:pat_param in ($range:expr).step_by($step:expr) => $body:stmt) => {
         {
             let _: usize = $step;
-            let mut __ite = $range.start;
-            let __end = $range.end;
+            let __range = $range;
+            let mut __ite = __range.start;
+            let __end = __range.end;
             let mut __is_first = true;
             let __step = $step;
 
@@ -31,8 +32,9 @@ macro_rules! const_for {
     ($var:pat_param in ($range:expr).rev().step_by($step:expr) => $body:stmt) => {
         {
             let _: usize = $step;
-            let mut __ite = $range.end;
-            let __start = $range.start;
+            let __range = $range;
+            let mut __ite = __range.end;
+            let __start = __range.start;
             let mut __is_first = true;
             let __step = $step;
 
@@ -62,7 +64,12 @@ macro_rules! const_for {
     };
 
     ($var:pat_param in ($range:expr).step_by($step:expr).rev() => $body:stmt) => {
-        $crate::const_for!($var in ($range.start..$range.end - ($range.end - $range.start - 1) % $step).rev().step_by($step) => $body)
+        {
+            let __range = $range;
+            if __range.start < __range.end {
+                $crate::const_for!($var in (__range.start..__range.end - (__range.end - __range.start - 1) % $step).rev().step_by($step) => $body)
+            }
+        }
     };
 
     ($var:pat_param in $range:expr => $body:stmt) => {

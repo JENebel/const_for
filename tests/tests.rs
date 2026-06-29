@@ -14,15 +14,15 @@ macro_rules! validate_loop {
     };
 
     ($step: expr, $($loop:tt)*) => {
-        validate_loop!(@impl ($($loop)*).step_by(1));
-        validate_loop!(@impl ($($loop)*).step_by(1).rev());
-        validate_loop!(@impl ($($loop)*).rev().step_by(1));
+        validate_loop!(@impl ($($loop)*).step_by($step));
+        validate_loop!(@impl ($($loop)*).step_by($step).rev());
+        validate_loop!(@impl ($($loop)*).rev().step_by($step));
     };
 
     ($($loop:tt)*) => {
         validate_loop!(@impl $($loop)*);
         validate_loop!(@impl ($($loop)*).rev());
-        
+
         validate_loop!(1, $($loop)*);
         validate_loop!(2, $($loop)*);
         validate_loop!(3, $($loop)*);
@@ -56,7 +56,7 @@ fn capture_range_at_beginning() {
         a += i;
     });
     let mut b = 113;
-    for i in 0..b-100 {
+    for i in 0..b - 100 {
         b += i;
     }
     assert_eq!(a, b);
@@ -86,7 +86,7 @@ const fn available_in_const() {
     const_for::const_for!(_ in (0..25).rev() => {
         a += 1
     });
-    const_for::const_for!(_ in (0..100).step_by(2) => 
+    const_for::const_for!(_ in (0..100).step_by(2) =>
         a += 1
     );
 
