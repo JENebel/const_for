@@ -39,7 +39,6 @@ macro_rules! validate_loop {
 fn equivalent_to_regular_for() {
     validate_loop!(-10..10);
     validate_loop!(0..10);
-    validate_loop!(-10..10);
     validate_loop!((0..10));
     validate_loop!(100..10);
     validate_loop!(-15..-12);
@@ -90,7 +89,7 @@ const fn available_in_const() {
         a += 1
     );
 
-    const_for::const_for!(mut i in (0..3) => {
+    const_for::const_for!(mut i in 0..3 => {
         i += 1;
         a += i
     });
@@ -99,7 +98,28 @@ const fn available_in_const() {
         a += 1
     });
 
-    assert!(a == 25 + 25 + 50 + 6 + 7);
+    // (0..10).step_by(3).rev() => 9, 6, 3, 0  (4 values)
+    const_for::const_for!(_ in (0..10).step_by(3).rev() => {
+        a += 1
+    });
+
+    // (0..10).rev().step_by(3) => 9, 6, 3, 0  (4 values)
+    const_for::const_for!(_ in (0..10).rev().step_by(3) => {
+        a += 1
+    });
+
+    assert!(a == 25 + 25 + 50 + 6 + 7 + 4 + 4);
+}
+
+#[test]
+fn break_and_continue() {
+    let mut hits = Vec::new();
+    const_for::const_for!(i in 0..10 => {
+        if i % 2 == 0 { continue }
+        if i == 7 { break }
+        hits.push(i);
+    });
+    assert_eq!(hits, vec![1, 3, 5]);
 }
 
 #[test]

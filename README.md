@@ -131,7 +131,7 @@ const_for!(_ in 0..5 => unsafe {
 });
 ```
 
-If the beginning of the range plus the step overflows the integer behaviour is undefined.
+If adding the step to the current value overflows the integer type, the behavior is unspecified: it panics in debug builds and wraps in release builds.
 
 #### Real world example
 
